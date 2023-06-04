@@ -5,41 +5,55 @@ using UnityEngine;
 public class PirateIA : MonoBehaviour
 {
     public GameObject player;
+    public GameObject bullet;
 
     private RaycastHit2D groundDetector;
+    private RaycastHit2D playerDetector;
 
     private Rigidbody2D pirateRigB;
 
-    private float speed = 5;
-    private float jumpForce = 1;
+    private BoxCollider2D pirateBoxC;
+
+    public float speed = 5;
+    public float shuttingRange = 5;
+    public float jumpForce = 1;
+    private float rayDesface;
+
+    private int orientation;
 
     public bool grounded;
-    // Start is called before the first frame update
     void Start()
     {
         pirateRigB = GetComponent<Rigidbody2D>();
-        Debug.Log(transform.position + new Vector3(1, 0));
+        pirateBoxC = GetComponent<BoxCollider2D>();
+        rayDesface = (pirateBoxC.size.x / 2 + 0.1f );
     }
-
-    // Update is called once per frame
     void Update()
     {
+        orientation = ((player.transform.position.x < transform.position.x) ? -1 : 1);
 
-        transform.Translate(new Vector2(1,0) * ((player.transform.position.x < transform.position.x)?-1:1) * speed * Time.deltaTime);
+        groundDetector = Physics2D.Raycast(transform.position + new Vector3(orientation * rayDesface, 0), new Vector3(0, -1, 0), 1f);
+        playerDetector = Physics2D.Raycast(transform.position + new Vector3(orientation * rayDesface, 0), new Vector3(orientation, 0, 0), shuttingRange);
 
-        groundDetector = Physics2D.Raycast(transform.position + new Vector3(1, -1), new Vector3(0, -1, 0), 1f);
+        Debug.DrawRay(transform.position + new Vector3(orientation * rayDesface, 0), new Vector3(orientation*shuttingRange,0,0),Color.white);
 
-        Debug.DrawRay(transform.position + new Vector3(1, 0), new Vector3(0,-1,0),Color.white);
+        transform.Translate(new Vector2(1,0) * orientation * speed * Time.deltaTime);
 
         if (groundDetector.collider == null && grounded == true)
         {
             grounded = false;
-            pirateRigB.AddForce(new Vector2(1, 1) * jumpForce, ForceMode2D.Impulse);
+            pirateRigB.AddForce(new Vector2(0, 1) * jumpForce, ForceMode2D.Impulse);
+            speed = 3f;
         }
-        else
-        {
 
+        if (playerDetector.collider!=null)
+        {
+            if (speed > 0) speed -= 0.1f;
+            Debug.Log("Fire!!"+transform.position.GetType());
+            Instantiate(bullet, transform.position,bullet.transform.rotation);
         }
+        
+
 
     }
 
@@ -48,6 +62,7 @@ public class PirateIA : MonoBehaviour
         if (other.collider.CompareTag("Ground"))
         {
             grounded = true;
+            if (playerDetector.collider == null) speed = 5;
         }
     }
 }
