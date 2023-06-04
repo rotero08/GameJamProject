@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,8 +17,9 @@ public class PlayerMovement : MonoBehaviour
     private float jumpingPower = 6f;
     private bool isFacingRight = true;
 
-    private bool isLadder;
-    private bool isClimbing;
+    private bool isCloseToLadder = false;
+    private bool hasStartedClimb = false;
+    private Transform ladder;
 
     void Update()
     {
@@ -29,11 +31,13 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
-
-        if (isLadder && Mathf.Abs(vertical) > 0f)
+        
+        if (isCloseToLadder && vertical != 0f)
         {
-            isClimbing = true;
+            hasStartedClimb = true;
         }
+
+
     }
 
     private void FixedUpdate()
@@ -41,20 +45,31 @@ public class PlayerMovement : MonoBehaviour
         horizontal = movement.x;
         vertical = movement.y;
 
-        Debug.Log(movement);
-        Debug.Log("Horizontal: " + horizontal);
-        Debug.Log("Vertical: " + vertical);
+        //Debug.Log(hasStartedClimb);
 
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-
-        if (isClimbing)
+        if (!hasStartedClimb)
         {
-            rb.gravityScale = 0f;
-            rb.velocity = new Vector2(horizontal * speed, vertical * speed);
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
         }
-        else
+
+        if (hasStartedClimb)
         {
-            rb.gravityScale = 1f;
+            ladder.GetChild(2).GetComponent<EdgeCollider2D>().enabled = false;
+            float height = GetComponent<SpriteRenderer>().size.y;
+            float topHandlerY = Half(ladder.transform.GetChild(0).transform.position.y + height);
+            float bottomHandlerY = Half(ladder.transform.GetChild(1).transform.position.y + height);
+            float transformY = Half(transform.position.y);
+            float transformVY = transformY + vertical;
+
+            if (transformVY > topHandlerY || transformVY < bottomHandlerY)
+            {
+                ResetClimbing();
+            }
+            else if (transformY <= topHandlerY && transformY >= bottomHandlerY)
+            {
+                rb.gravityScale = 0f;
+                rb.velocity = new Vector2(horizontal * speed, vertical * speed);
+            }
         }
     }
 
@@ -84,25 +99,43 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = localScale;
     }
 
-    public void MoveSide(InputAction.CallbackContext context)
+    public void Move(InputAction.CallbackContext context)
     {
         movement = context.ReadValue<Vector2>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void ResetClimbing()
     {
-        if (collision.CompareTag("Ladder"))
+        ladder.GetChild(2).GetComponent<EdgeCollider2D>().enabled = true;
+        if (hasStartedClimb)
         {
-            isLadder = true;
+            hasStartedClimb = false;
+            rb.gravityScale = 1f;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        Debug.Log("Trigger Detected");
+        if (collision.gameObject.tag.Equals("Ladder"))
+        {
+            isCloseToLadder = true;
+            ladder = collision.transform;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ladder"))
+        if (collision.gameObject.tag.Equals("Ladder"))
         {
-            isLadder = false;
-            isClimbing = false;
+            rb.gravityScale = 1f;
+            isCloseToLadder = false;
+            hasStartedClimb = false;
         }
+    }
+
+    public static float Half(float value)
+    {
+        return Mathf.Floor(value) + 0.5f;
     }
 }
