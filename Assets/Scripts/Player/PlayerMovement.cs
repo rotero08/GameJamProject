@@ -114,9 +114,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!collision.gameObject.layer.Equals("Ground"))
+        {
+            Debug.Log(collision.gameObject.name);
+        }
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log("Trigger Detected");
+        //Debug.Log("Trigger Detected");
         if (collision.gameObject.tag.Equals("Ladder"))
         {
             isCloseToLadder = true;
@@ -126,6 +133,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        ladder.GetChild(2).GetComponent<EdgeCollider2D>().enabled = true;
         if (collision.gameObject.tag.Equals("Ladder"))
         {
             rb.gravityScale = 1f;
