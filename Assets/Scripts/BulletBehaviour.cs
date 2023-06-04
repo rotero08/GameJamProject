@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletBehaviour : MonoBehaviour
 {
     // Start is called before the first frame update
-    public float speed = 10;
+    public float speed = 20;
     void Start()
     {
         
@@ -19,6 +19,10 @@ public class BulletBehaviour : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(gameObject);
+        if (!collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
+        }   
+        
     }
 }
