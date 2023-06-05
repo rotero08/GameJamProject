@@ -5,7 +5,7 @@ using UnityEngine;
 public class vacaFlotante : MonoBehaviour
 {
     public float fuerzaFlotacion = 1f;
-    public float duracionFlotacion = 5f;
+    public float duracionFlotacion = 3f;
     public float velocidadRotacion = 90f;
 
     private Rigidbody2D rb;
