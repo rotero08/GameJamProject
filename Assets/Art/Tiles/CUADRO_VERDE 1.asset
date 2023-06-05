@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: CUADRO_MORADO_8X8
+  m_Name: CUADRO_VERDE 1
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 2519f5527fc99e74494c08b226c3b5e9, type: 3}
-  m_Color: {r: 0.19691545, g: 0.069811285, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 30089cf03f688414d8ebb99b29c8cd7e, type: 3}
+  m_Color: {r: 0.3090623, g: 1, b: 0.16509432, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -33,4 +33,4 @@ MonoBehaviour:
     e33: 1
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
-  m_ColliderType: 0
+  m_ColliderType: 1
