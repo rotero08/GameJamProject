@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         horizontal = movement.x;
         vertical = movement.y;
 
-        Debug.Log(movement);
+        //Debug.Log(movement);
 
         if (!hasStartedClimb)
         {
@@ -101,7 +101,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
+        
         movement = context.ReadValue<Vector2>();
+        Debug.Log(movement);
     }
 
     private void ResetClimbing()

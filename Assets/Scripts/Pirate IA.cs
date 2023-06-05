@@ -34,6 +34,27 @@ public class PirateIA : MonoBehaviour
     private int orientation;
 
     public bool grounded;
+
+    public int health = 100;
+
+    public GameObject deathEffect;
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        //Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+    }
+
     void Start()
     {
         realSpeed = baseSpeed;
@@ -42,6 +63,7 @@ public class PirateIA : MonoBehaviour
         rayDesfaceX = (pirateBoxC.size.x / 2 + 0.25f );
         rayDesfaceY = (pirateBoxC.size.y / 2 + 0.25f);
     }
+
     void Update()
     {
 
