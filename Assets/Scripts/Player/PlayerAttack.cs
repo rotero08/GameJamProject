@@ -15,6 +15,9 @@ public class PlayerAttack : MonoBehaviour
 
     public void Shoot(InputAction.CallbackContext context)
     {
-        Shoot();
+        if (context.performed)
+        {
+            Shoot();
+        }
     }
 }
